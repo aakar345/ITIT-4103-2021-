@@ -1,0 +1,83 @@
+from sklearn import datasets
+from sklearn.cluster import KMeans
+from sklearn.utils import shuffle
+import numpy as np
+import pandas as pd
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.mixture import GaussianMixture
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
+#Loading iris dataset and defining the our target and data
+iris=datasets.load_iris()
+X=iris.data
+Y=iris.target
+
+#Shuffle of Data
+X,Y = shuffle(X,Y)
+
+#Defining model
+model=KMeans(n_clusters=3,init='k-means++',max_iter=10,n_init=1,verbose=0,random_state=3425)
+
+#Training of the model
+model.fit(X)
+
+# This is what KMeans thought (Prediction)
+Y_Pred=model.labels_
+#Accuracy of KMean model
+cm=confusion_matrix(Y,Y_Pred)
+
+print('kmean',accuracy_score(Y,Y_Pred))
+print('confusion matrix',cm)
+
+#loading data-set for EM algorithm
+iris = datasets.load_iris()
+X = pd.DataFrame(iris.data)
+Y = pd.DataFrame(iris.target)
+X,Y = shuffle(X,Y)
+#Defining EM Model
+model2=GaussianMixture(n_components=3,random_state=3425)
+
+#Training of the model
+model2.fit(X)
+
+#Predicting classes for our data
+uu= model2.predict(X)
+
+#Accuracy of EM Model
+
+cm=confusion_matrix(Y,uu)
+
+print('em',accuracy_score(Y,uu))
+print('confusion matrix',cm)
+
+pca=PCA(n_components=2)
+X_new=pca.fit_transform(X)
+print('explained variance ratio of first 2 principal components ',pca.explained_variance_ratio_)
+
+model=KMeans(n_clusters=3,init='k-means++',max_iter=10,n_init=1,verbose=0,random_state=3425)
+model.fit(X_new)
+
+# This is what KMeans thought (Prediction)
+Y_Pred=model.labels_
+#Accuracy of KMean model
+cm=confusion_matrix(Y,Y_Pred)
+
+print('kmeanpca',accuracy_score(Y,Y_Pred))
+print('confusion matrix',cm)
+
+model2=GaussianMixture(n_components=3,random_state=3425)
+
+#Training of the model
+model2.fit(X_new)
+
+#Predicting classes for our data
+uu= model2.predict(X_new)
+
+#Accuracy of EM Model
+
+cm=confusion_matrix(Y,uu)
+
+print('empca',accuracy_score(Y,uu))
+print('confusion matrix',cm)
